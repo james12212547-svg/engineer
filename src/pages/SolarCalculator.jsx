@@ -1,8 +1,128 @@
-import { useState } from 'react';
-import { ArrowLeft, Calculator, Zap, BatteryCharging } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ArrowLeft, Calculator, Zap, BatteryCharging, TrendingUp } from 'lucide-react';
+import { AreaChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { calculateSolarRoi } from '../utils/engineering/solarRoi';
+
+const InvestmentChart = ({ cost, monthlySavings }) => {
+  const [returnRate, setReturnRate] = useState(5); // Default 5%
+  const [years, setYears] = useState(20);
+
+  // Generate Data
+  const data = useMemo(() => {
+    const arr = [];
+    let compounded = 0;
+    const annualSavings = monthlySavings * 12;
+    const rate = returnRate / 100;
+    
+    for (let y = 0; y <= years; y++) {
+      if (y === 0) {
+        arr.push({ year: y, "เงินประหยัดสะสม": 0, "มูลค่าทบต้น": 0, "จุดคุ้มทุน (ต้นทุน)": cost });
+      } else {
+        compounded = (compounded + annualSavings) * (1 + rate);
+        arr.push({ 
+          year: y, 
+          "เงินประหยัดสะสม": Math.round(annualSavings * y), 
+          "มูลค่าทบต้น": Math.round(compounded),
+          "จุดคุ้มทุน (ต้นทุน)": cost 
+        });
+      }
+    }
+    return arr;
+  }, [cost, monthlySavings, returnRate, years]);
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', padding: '1rem', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+          <p style={{ margin: '0 0 0.5rem', fontWeight: 'bold' }}>ปีที่ {label}</p>
+          {payload.map((entry, index) => (
+            <p key={`item-${index}`} style={{ color: entry.color, margin: '0.25rem 0', fontSize: '0.9rem' }}>
+              {entry.name}: {entry.value.toLocaleString()} ฿
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div style={{ marginTop: '2rem', padding: '2rem', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h3 style={{ margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <TrendingUp size={20} color="var(--accent-solar)" /> การเติบโตของการลงทุน (Investment Growth)
+          </h3>
+          <p style={{ margin: '0.25rem 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+            เปรียบเทียบการนำเงินประหยัดค่าไฟรายเดือนไปลงทุนต่อ (Compound Interest)
+          </p>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>ผลตอบแทนลงทุน (%/ปี)</label>
+            <input 
+              type="number" 
+              value={returnRate} 
+              onChange={e => setReturnRate(Number(e.target.value))}
+              style={{ width: '90px', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
+            />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>ระยะเวลา (ปี)</label>
+            <input 
+              type="number" 
+              value={years} 
+              onChange={e => setYears(Number(e.target.value))}
+              style={{ width: '90px', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div style={{ width: '100%', height: '350px' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorCompounded" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+            <XAxis dataKey="year" stroke="var(--text-tertiary)" tick={{ fill: 'var(--text-tertiary)' }} />
+            <YAxis stroke="var(--text-tertiary)" tick={{ fill: 'var(--text-tertiary)' }} tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`} width={60} />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ paddingBottom: '1rem' }} />
+            <Area type="monotone" dataKey="เงินประหยัดสะสม" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSavings)" strokeWidth={2} />
+            <Area type="monotone" dataKey="มูลค่าทบต้น" stroke="#10b981" fillOpacity={1} fill="url(#colorCompounded)" strokeWidth={3} />
+            <Line type="monotone" dataKey="จุดคุ้มทุน (ต้นทุน)" stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+      
+      <div style={{ marginTop: '2rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '8px', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+        <div style={{ background: '#10b981', color: 'white', padding: '0.75rem', borderRadius: '50%', display: 'flex', flexShrink: 0 }}>
+          <TrendingUp size={24} />
+        </div>
+        <div>
+          <h4 style={{ margin: 0, color: '#10b981', fontSize: '1.1rem' }}>วิสัยทัศน์ทางธุรกิจและการลงทุน</h4>
+          <p style={{ margin: '0.5rem 0 0', color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.5' }}>
+            การลงทุนโซลาร์เซลล์ไม่ได้เป็นเพียงแค่การลดค่าใช้จ่าย แต่หากนำเงินที่ประหยัดได้ <strong>{(monthlySavings).toLocaleString()} บาท/เดือน</strong> ไปลงทุนต่อยอดในธุรกิจหรือกองทุนรวมที่ให้ผลตอบแทนเฉลี่ย <strong>{returnRate}% ต่อปี</strong>
+            <br />
+            ภายในระยะเวลา <strong>{years} ปี</strong> มูลค่ารวมของผลประหยัดจะกลายเป็น <strong>{data[data.length - 1]["มูลค่าทบต้น"].toLocaleString()} บาท</strong> ซึ่งมากกว่ามูลค่าเงินต้นและให้กำไรสุทธิมหาศาล!
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const SolarCalculator = () => {
   const navigate = useNavigate();
@@ -143,6 +263,9 @@ const SolarCalculator = () => {
             <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>
               * หมายเหตุ: อ้างอิงชั่วโมงแดดเฉลี่ย (Peak Sun Hours) 4 ชั่วโมง/วัน และแผงโซลาร์เซลล์ขนาด 550W. ราคาติดตั้งอาจเปลี่ยนแปลงตามหน้างานและยี่ห้ออุปกรณ์
             </div>
+            
+            {/* 📈 WOW Factor: Investment Chart */}
+            <InvestmentChart cost={result.estimatedCost} monthlySavings={result.actualSavingsPerMonth} />
           </div>
         )}
       </div>

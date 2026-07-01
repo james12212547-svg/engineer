@@ -422,3 +422,55 @@ h1, h2, h3, h4, h5, h6 {
     display: block !important;
   }
 }
+
+/* AI Chatbot Responsive Styles */
+.chatbot-btn {
+  position: fixed;
+  bottom: 110px; /* high enough to clear mobile nav + safe area */
+  right: 1.5rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00F0FF 0%, #0080FF 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+
+.chatbot-btn:hover {
+  transform: scale(1.1);
+}
+
+.chatbot-window {
+  position: fixed;
+  bottom: 110px;
+  right: 1.5rem;
+  width: 350px;
+  max-width: calc(100vw - 3rem);
+  height: 500px;
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .chatbot-btn {
+    bottom: 2rem;
+    right: 2rem;
+  }
+  .chatbot-window {
+    bottom: 2rem;
+    right: 2rem;
+  }
+}

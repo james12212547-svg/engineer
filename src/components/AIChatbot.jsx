@@ -113,27 +113,7 @@ const AIChatbot = () => {
       {!isOpen && (
         <button 
           onClick={() => setIsOpen(true)}
-          className="animate-fade-in"
-          style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #00F0FF 0%, #0080FF 100%)',
-            color: 'white',
-            border: 'none',
-            boxShadow: '0 4px 20px rgba(0, 240, 255, 0.4)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            transition: 'transform 0.3s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          className="chatbot-btn animate-fade-in"
         >
           <Bot size={32} />
         </button>
@@ -141,24 +121,7 @@ const AIChatbot = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div 
-          className="animate-fade-in"
-          style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            width: '350px',
-            height: '500px',
-            background: 'var(--bg-secondary)',
-            borderRadius: '16px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-            border: '1px solid var(--border-color)',
-            display: 'flex',
-            flexDirection: 'column',
-            zIndex: 1000,
-            overflow: 'hidden'
-          }}
-        >
+        <div className="chatbot-window animate-fade-in">
           {/* Header */}
           <div style={{ padding: '1rem', background: 'linear-gradient(135deg, #00F0FF 0%, #0080FF 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

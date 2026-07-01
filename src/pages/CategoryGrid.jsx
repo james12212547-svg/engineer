@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, ChevronRight, Home } from 'lucide-react';
 import { equipmentData, categories } from '../data/equipment';
 import { loadImage } from '../utils/db';
+import useStore from '../store/useStore';
+import AddEquipmentModal from '../components/AddEquipmentModal';
+import { Plus } from 'lucide-react';
 
 const CategoryGrid = () => {
   const { categoryId } = useParams();
@@ -10,9 +13,19 @@ const CategoryGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all'); // 'all', 'a-z'
   const [searchQuery, setSearchQuery] = useState('');
   const [localImages, setLocalImages] = useState({});
+  const [showAddModal, setShowAddModal] = useState(false);
+  const customEquipment = useStore(state => state.customEquipment);
+  const addCustomEquipment = useStore(state => state.addCustomEquipment);
   
   const category = categories.find(c => c.id === categoryId);
-  let filteredEquipment = equipmentData.filter(eq => eq.category === categoryId);
+  
+  // Merge static data with custom equipment for this category
+  const allEquipment = [
+    ...equipmentData.filter(eq => eq.category === categoryId),
+    ...customEquipment.filter(eq => eq.category === categoryId)
+  ];
+
+  let filteredEquipment = [...allEquipment];
 
   useEffect(() => {
     const fetchImages = () => {
@@ -94,18 +107,27 @@ const CategoryGrid = () => {
         />
       </div>
 
-      <div className="filter-container">
+      <div className="filter-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+          <button 
+            className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            ทั้งหมด
+          </button>
+          <button 
+            className={`filter-btn ${activeFilter === 'a-z' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('a-z')}
+          >
+            เรียงตามตัวอักษร (ก-ฮ)
+          </button>
+        </div>
         <button 
-          className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveFilter('all')}
+          onClick={() => setShowAddModal(true)}
+          className="filter-btn animate-fade-in"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--accent-primary)', color: 'white', border: 'none', padding: '0.5rem 1rem' }}
         >
-          ทั้งหมด
-        </button>
-        <button 
-          className={`filter-btn ${activeFilter === 'a-z' ? 'active' : ''}`}
-          onClick={() => setActiveFilter('a-z')}
-        >
-          เรียงตามตัวอักษร (ก-ฮ)
+          <Plus size={18} /> <span className="hide-on-mobile">เพิ่มสเปกใหม่</span>
         </button>
       </div>
 
@@ -136,6 +158,14 @@ const CategoryGrid = () => {
         <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-tertiary)' }}>
           <p>ไม่พบอุปกรณ์ที่ค้นหา</p>
         </div>
+      )}
+
+      {showAddModal && (
+        <AddEquipmentModal 
+          categoryId={categoryId} 
+          onClose={() => setShowAddModal(false)}
+          onSave={addCustomEquipment}
+        />
       )}
     </div>
   );

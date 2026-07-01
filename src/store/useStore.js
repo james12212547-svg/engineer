@@ -34,6 +34,19 @@ const useStore = create((set) => ({
     localStorage.setItem('favorites', JSON.stringify(newFavorites));
     return { favorites: newFavorites };
   }),
+
+  // --- Custom Equipment State ---
+  customEquipment: JSON.parse(localStorage.getItem('customEquipment') || '[]'),
+  addCustomEquipment: (equipment) => set((state) => {
+    const newEquipment = [...state.customEquipment, equipment];
+    localStorage.setItem('customEquipment', JSON.stringify(newEquipment));
+    return { customEquipment: newEquipment };
+  }),
+  deleteCustomEquipment: (id) => set((state) => {
+    const newEquipment = state.customEquipment.filter(eq => eq.id !== id);
+    localStorage.setItem('customEquipment', JSON.stringify(newEquipment));
+    return { customEquipment: newEquipment };
+  }),
 }));
 
 // Initialize theme on load

@@ -15,9 +15,12 @@ const EquipmentDetail = () => {
   
   const favorites = useStore(state => state.favorites);
   const toggleFavorite = useStore(state => state.toggleFavorite);
+  const customEquipmentList = useStore(state => state.customEquipment);
+  const deleteCustomEquipment = useStore(state => state.deleteCustomEquipment);
   const isFav = favorites.includes(id);
 
-  const equipment = equipmentData.find(eq => eq.id === id);
+  const allEquipment = [...equipmentData, ...customEquipmentList];
+  const equipment = allEquipment.find(eq => eq.id === id);
 
   useEffect(() => {
     if (id) {
@@ -74,6 +77,14 @@ const EquipmentDetail = () => {
 
   const categoryObj = categories.find(c => c.id === equipment.category);
   const categoryName = categoryObj ? categoryObj.name : '';
+
+  const handleDelete = () => {
+    if (window.confirm('คุณแน่ใจหรือไม่ที่จะลบข้อมูลอุปกรณ์นี้?')) {
+      deleteCustomEquipment(id);
+      toast.success('ลบข้อมูลอุปกรณ์เรียบร้อยแล้ว');
+      navigate(-1);
+    }
+  };
 
   return (
     <>
@@ -228,6 +239,14 @@ const EquipmentDetail = () => {
             <button onClick={handleDownloadDatasheet} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
               <Download size={20} /> โหลด Datasheet (PDF)
             </button>
+            {equipment.isCustom && (
+              <button 
+                onClick={handleDelete}
+                style={{ background: 'transparent', color: '#ef4444', border: '2px solid #ef4444', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', transition: 'all 0.2s ease' }}
+              >
+                ลบข้อมูลนี้
+              </button>
+            )}
           </div>
         </div>
 

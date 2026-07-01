@@ -94,10 +94,6 @@ const EquipmentDetail = () => {
           <Home size={16} /> หน้าแรก
         </Link>
         <ChevronRight size={16} />
-        <Link to="/learning" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-          ศูนย์การเรียนรู้
-        </Link>
-        <ChevronRight size={16} />
         <Link to={`/category/${equipment.category}`} style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
           {categoryName}
         </Link>

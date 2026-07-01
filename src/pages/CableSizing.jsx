@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateCableSizing } from '../utils/engineering/cableSizing';
+import Tooltip from '../components/Tooltip';
 
 const CableSizing = () => {
   const navigate = useNavigate();
@@ -57,7 +58,10 @@ const CableSizing = () => {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ขนาดสายไฟที่แนะนำ (THW / VAF เดินในท่อ)</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                  ขนาดสายไฟที่แนะนำ (THW / VAF เดินในท่อ)
+                  <Tooltip text="อ้างอิงตาราง 5-20 มาตรฐาน วสท. (การติดตั้งในท่อโลหะหรือท่ออโลหะ)" />
+                </p>
                 <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--accent-solar)' }}>
                   {result.cableSize} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>ตร.มม. (sq.mm)</span>
                 </p>

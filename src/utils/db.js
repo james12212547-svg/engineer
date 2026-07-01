@@ -1,11 +1,12 @@
 export const DB_NAME = 'EquipmentAppDB';
 export const STORE_NAME = 'images';
 export const CUSTOM_EQ_STORE = 'custom_equipment';
+export const LAB_EXPERIMENTS_STORE = 'lab_experiments';
 
 export const initDB = () => {
   return new Promise((resolve, reject) => {
-    // Increased version to 2 to support custom_equipment store
-    const request = indexedDB.open(DB_NAME, 2);
+    // Increased version to 3 to support lab_experiments store
+    const request = indexedDB.open(DB_NAME, 3);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (e) => {
@@ -15,6 +16,9 @@ export const initDB = () => {
       }
       if (!db.objectStoreNames.contains(CUSTOM_EQ_STORE)) {
         db.createObjectStore(CUSTOM_EQ_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(LAB_EXPERIMENTS_STORE)) {
+        db.createObjectStore(LAB_EXPERIMENTS_STORE, { keyPath: 'id' });
       }
     };
   });
@@ -112,6 +116,44 @@ export const getAllCustomEquipmentDB = async () => {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(CUSTOM_EQ_STORE, 'readonly');
     const store = tx.objectStore(CUSTOM_EQ_STORE);
+    const request = store.getAll();
+    
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+// --- Lab Experiments ---
+
+export const saveLabExperimentDB = async (experiment) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(LAB_EXPERIMENTS_STORE, 'readwrite');
+    const store = tx.objectStore(LAB_EXPERIMENTS_STORE);
+    store.put(experiment);
+    
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const deleteLabExperimentDB = async (id) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(LAB_EXPERIMENTS_STORE, 'readwrite');
+    const store = tx.objectStore(LAB_EXPERIMENTS_STORE);
+    store.delete(id);
+    
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const getAllLabExperimentsDB = async () => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(LAB_EXPERIMENTS_STORE, 'readonly');
+    const store = tx.objectStore(LAB_EXPERIMENTS_STORE);
     const request = store.getAll();
     
     request.onsuccess = () => resolve(request.result || []);

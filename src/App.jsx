@@ -22,6 +22,7 @@ import WorkLog from './pages/WorkLog';
 import PfcCalculator from './pages/PfcCalculator';
 import VoltageDrop from './pages/VoltageDrop';
 import LoadSchedule from './pages/LoadSchedule';
+import LabLogger from './pages/LabLogger';
 import Favorites from './pages/Favorites';
 import Settings from './pages/Settings';
 import ReloadPrompt from './components/ReloadPrompt';
@@ -70,6 +71,7 @@ function App() {
             <Route path="/learning/voltage-drop" element={<VoltageDrop />} />
             <Route path="/learning/load-schedule" element={<LoadSchedule />} />
             <Route path="/learning/3d" element={<ModelViewer />} />
+            <Route path="/learning/lab-logger" element={<LabLogger />} />
             <Route path="/work-log" element={<WorkLog />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/settings" element={<Settings />} />

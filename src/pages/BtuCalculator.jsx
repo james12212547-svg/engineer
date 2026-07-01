@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Thermometer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateBtuSizing } from '../utils/engineering/btuCalc';
+import GlossaryLink from '../components/GlossaryLink';
 
 const BtuCalculator = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const BtuCalculator = () => {
           <ArrowLeft size={24} />
         </button>
         <div>
-          <h1 className="text-gradient-ac" style={{ marginBottom: 0, fontSize: '2rem' }}>โปรแกรมคำนวณ BTU แอร์</h1>
+          <h1 className="text-gradient-ac" style={{ marginBottom: 0, fontSize: '2rem' }}>โปรแกรมคำนวณ <GlossaryLink term="BTU" /> แอร์</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Air Conditioner BTU Calculator</p>
         </div>
       </div>
@@ -80,7 +81,7 @@ const BtuCalculator = () => {
               </div>
               
               <div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ค่า BTU ที่ต้องการ (ตามสูตร)</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ค่า <GlossaryLink term="BTU" /> ที่ต้องการ (ตามสูตร)</p>
                 <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{result.calculatedBTU.toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>BTU/hr</span></p>
               </div>
 

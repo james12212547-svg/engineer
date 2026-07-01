@@ -3,18 +3,18 @@ import { X, Upload, Plus, Trash2, Camera, Image as ImageIcon } from 'lucide-reac
 import toast from 'react-hot-toast';
 import { compressImage } from '../utils/imageUtils';
 
-const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
+const AddEquipmentModal = ({ categoryId, onClose, onSave, initialData = null }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    nameEng: '',
-    abbreviation: '',
-    function: '',
-    principle: '',
-    warnings: '',
+    name: initialData?.name || '',
+    nameEng: initialData?.nameEng || '',
+    abbreviation: initialData?.abbreviation || '',
+    function: initialData?.function || '',
+    principle: initialData?.principle || '',
+    warnings: initialData?.warnings || '',
   });
-  const [specs, setSpecs] = useState([]);
+  const [specs, setSpecs] = useState(initialData?.specs || []);
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [imagePreview, setImagePreview] = useState(initialData?.image || '');
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
@@ -57,10 +57,11 @@ const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
       return;
     }
 
-    const newId = `custom-${Date.now()}`;
+    const newId = initialData?.id || `custom-${Date.now()}`;
     const newEquipment = {
+      ...initialData,
       id: newId,
-      category: categoryId,
+      category: categoryId || initialData?.category,
       isCustom: true,
       ...formData,
       specs: specs.filter(s => s.label && s.value), // Remove empty specs
@@ -68,7 +69,7 @@ const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
     };
 
     onSave(newEquipment);
-    toast.success('เพิ่มข้อมูลอุปกรณ์ใหม่สำเร็จ!');
+    toast.success(initialData ? 'อัปเดตข้อมูลอุปกรณ์สำเร็จ!' : 'เพิ่มข้อมูลอุปกรณ์ใหม่สำเร็จ!');
     onClose();
   };
 
@@ -90,7 +91,7 @@ const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
           <X size={24} />
         </button>
 
-        <h2 style={{ marginBottom: '1.5rem' }}>เพิ่มอุปกรณ์ใหม่</h2>
+        <h2 style={{ marginBottom: '1.5rem' }}>{initialData ? 'แก้ไขข้อมูลอุปกรณ์' : 'เพิ่มอุปกรณ์ใหม่'}</h2>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
@@ -167,6 +168,22 @@ const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
             />
           </div>
 
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>หลักการทำงานเบื้องต้น</label>
+            <textarea 
+              name="principle" value={formData.principle} onChange={handleInputChange} rows={3}
+              style={{ padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', width: '100%', resize: 'vertical' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>ข้อควรระวัง (ถ้ามี)</label>
+            <textarea 
+              name="warnings" value={formData.warnings} onChange={handleInputChange} rows={3}
+              style={{ padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', width: '100%', resize: 'vertical' }}
+            />
+          </div>
+
           {/* Specs Editor */}
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '0.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -219,7 +236,7 @@ const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
               type="submit"
               style={{ flex: 2, padding: '1rem', background: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: '500' }}
             >
-              บันทึกข้อมูลอุปกรณ์
+              {initialData ? 'บันทึกการแก้ไข' : 'บันทึกข้อมูลอุปกรณ์'}
             </button>
           </div>
 

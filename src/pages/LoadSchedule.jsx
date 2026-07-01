@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Activity, Save, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Activity, Save, RotateCcw, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const LoadSchedule = () => {
@@ -74,6 +74,33 @@ const LoadSchedule = () => {
     });
   };
 
+  const exportLoadScheduleToCSV = () => {
+    if (loads.length === 0) {
+      alert("ไม่มีข้อมูลในตาราง");
+      return;
+    }
+    
+    // 1. สร้าง Header
+    let csvContent = "ชื่อโหลด,กระแส (A),เฟส(Phase)\n";
+    
+    // 2. วนลูปข้อมูลในตาราง
+    loads.forEach(load => {
+      csvContent += `"${load.name}","${load.current}","${load.phase}"\n`;
+    });
+
+    // 3. สร้าง Blob สำหรับโหลดไฟล์ (ใส่ BOM \uFEFF เพื่อให้ Excel อ่านภาษาไทยได้ถูกต้อง)
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    // 4. สร้างแท็ก <a> จำลองเพื่อกดดาวน์โหลด
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `load_schedule_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="animate-fade-in" style={{ paddingBottom: '2rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
@@ -139,11 +166,16 @@ const LoadSchedule = () => {
 
         {/* Load List Table */}
         <div className="equipment-card" style={{ padding: '1.5rem', overflowX: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>รายการโหลดทั้งหมด</h3>
-            <button onClick={clearAll} style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-              <RotateCcw size={16} /> ล้างตาราง
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button onClick={exportLoadScheduleToCSV} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                <Download size={16} /> Export CSV
+              </button>
+              <button onClick={clearAll} style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                <RotateCcw size={16} /> ล้างตาราง
+              </button>
+            </div>
           </div>
           
           {loads.length === 0 ? (

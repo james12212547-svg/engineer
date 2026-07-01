@@ -50,7 +50,13 @@ const useStore = create(
       addCustomEquipment: async (equipment) => {
         try {
           await saveCustomEquipmentDB(equipment);
-          set((state) => ({ customEquipment: [...state.customEquipment, equipment] }));
+          set((state) => {
+            const exists = state.customEquipment.some(eq => eq.id === equipment.id);
+            if (exists) {
+              return { customEquipment: state.customEquipment.map(eq => eq.id === equipment.id ? equipment : eq) };
+            }
+            return { customEquipment: [...state.customEquipment, equipment] };
+          });
         } catch (error) {
           console.error("Failed to add custom equipment:", error);
           throw error;

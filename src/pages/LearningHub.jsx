@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Calculator, HelpCircle, Activity, SplitSquareHorizontal, Zap, Thermometer, Book, Box, ShieldAlert, ListChecks } from 'lucide-react';
+import { Calculator, HelpCircle, Activity, SplitSquareHorizontal, Zap, Thermometer, Book, Box, ShieldAlert, ListChecks, TestTube } from 'lucide-react';
 
 const LearningHub = () => {
   return (
@@ -141,6 +141,21 @@ const LearningHub = () => {
           <div className="category-card-content" style={{ textAlign: 'center' }}>
             <h3 className="text-gradient-solar" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>โมเดลจำลอง 3 มิติ</h3>
             <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.85rem' }}>3D Model Viewer</p>
+          </div>
+        </Link>
+      </div>
+
+      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>5. หมวดเครื่องมือเฉพาะทาง (Specialized Tools)</h2>
+      <div className="grid-2">
+        <Link to="/learning/lab-logger" className="category-card" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ background: 'rgba(0, 240, 255, 0.1)', padding: '1rem', borderRadius: '50%', color: 'var(--accent-ac)' }}>
+              <TestTube size={48} />
+            </div>
+          </div>
+          <div className="category-card-content" style={{ textAlign: 'center' }}>
+            <h3 className="text-gradient-ac" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>บันทึกผลการทดลอง</h3>
+            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.85rem' }}>Lab Experiment Logger</p>
           </div>
         </Link>
       </div>

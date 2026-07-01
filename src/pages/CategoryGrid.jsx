@@ -19,11 +19,12 @@ const CategoryGrid = () => {
   
   const category = categories.find(c => c.id === categoryId);
   
-  // Merge static data with custom equipment for this category
-  const allEquipment = [
-    ...equipmentData.filter(eq => eq.category === categoryId),
-    ...customEquipment.filter(eq => eq.category === categoryId)
-  ];
+  // Merge static data with custom equipment for this category (custom overwrites static)
+  const catCustom = customEquipment.filter(eq => eq.category === categoryId);
+  const customIds = new Set(catCustom.map(eq => eq.id));
+  const catStatic = equipmentData.filter(eq => eq.category === categoryId && !customIds.has(eq.id));
+  
+  const allEquipment = [...catStatic, ...catCustom];
 
   let filteredEquipment = [...allEquipment];
 

@@ -10,6 +10,12 @@ const PfcCalculator = () => {
   const [targetPF, setTargetPF] = useState('0.95');
   const [result, setResult] = useState(null);
 
+  const numCurrentPF = Number(currentPF);
+  const numTargetPF = Number(targetPF);
+  
+  // Logic ตรวจสอบ: Target PF ต้องไม่เกิน 1.0 และต้องมากกว่า Current PF
+  const isInvalidPf = (targetPF !== '' && currentPF !== '') && (numTargetPF > 1.0 || numTargetPF <= numCurrentPF);
+
   const calculatePFC = (e) => {
     e.preventDefault();
     const calculationResult = calculatePfc(activePower, currentPF, targetPF);
@@ -48,10 +54,47 @@ const PfcCalculator = () => {
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Power Factor เป้าหมาย (Target PF)</label>
-              <input type="number" step="0.01" value={targetPF} onChange={(e) => setTargetPF(e.target.value)} required placeholder="แนะนำ 0.95 - 1.0" style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+              <input 
+                type="number" 
+                step="0.01" 
+                value={targetPF} 
+                onChange={(e) => setTargetPF(e.target.value)} 
+                required 
+                placeholder="แนะนำ 0.95 - 1.0" 
+                style={{ 
+                  width: '100%', 
+                  padding: '1rem', 
+                  borderRadius: '8px', 
+                  border: isInvalidPf ? '1px solid #ef4444' : '1px solid var(--border-color)', 
+                  background: isInvalidPf ? 'rgba(239, 68, 68, 0.05)' : 'var(--bg-primary)', 
+                  color: 'var(--text-primary)' 
+                }} 
+              />
+              {isInvalidPf && (
+                <span style={{ color: '#ef4444', fontSize: '0.85rem', marginTop: '0.5rem', display: 'block' }}>
+                  PF เป้าหมายต้องไม่เกิน 1.0 และต้องมากกว่า PF ปัจจุบัน
+                </span>
+              )}
             </div>
             
-            <button type="submit" style={{ background: 'linear-gradient(135deg, #FFB75E 0%, #ED8F03 100%)', color: 'white', padding: '1rem', borderRadius: '8px', border: 'none', fontSize: '1.1rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <button 
+              type="submit" 
+              disabled={isInvalidPf}
+              style={{ 
+                background: isInvalidPf ? 'var(--bg-tertiary)' : 'linear-gradient(135deg, #FFB75E 0%, #ED8F03 100%)', 
+                color: isInvalidPf ? 'var(--text-tertiary)' : 'white', 
+                padding: '1rem', 
+                borderRadius: '8px', 
+                border: 'none', 
+                fontSize: '1.1rem', 
+                fontWeight: 'bold', 
+                cursor: isInvalidPf ? 'not-allowed' : 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '0.5rem' 
+              }}
+            >
               <Zap size={20} /> คำนวณ Capacitor
             </button>
           </form>

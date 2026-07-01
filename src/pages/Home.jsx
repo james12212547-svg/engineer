@@ -9,7 +9,9 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const customEquipment = useStore(state => state.customEquipment);
 
-  const allEquipment = [...equipmentData, ...customEquipment];
+  const customIds = new Set(customEquipment.map(eq => eq.id));
+  const filteredStatic = equipmentData.filter(eq => !customIds.has(eq.id));
+  const allEquipment = [...filteredStatic, ...customEquipment];
 
   let filteredEquipment = allEquipment;
 

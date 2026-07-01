@@ -6,6 +6,8 @@ import { equipmentData, categories } from '../data/equipment';
 import { saveImage, loadImage } from '../utils/db';
 import { compressImage } from '../utils/imageUtils';
 import useStore from '../store/useStore';
+import AddEquipmentModal from '../components/AddEquipmentModal';
+import { Pencil } from 'lucide-react';
 
 const EquipmentDetail = () => {
   const { id } = useParams();
@@ -18,9 +20,15 @@ const EquipmentDetail = () => {
   const toggleFavorite = useStore(state => state.toggleFavorite);
   const customEquipmentList = useStore(state => state.customEquipment);
   const deleteCustomEquipment = useStore(state => state.deleteCustomEquipment);
+  const addCustomEquipment = useStore(state => state.addCustomEquipment);
   const isFav = favorites.includes(id);
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  const allEquipment = [...equipmentData, ...customEquipmentList];
+  // Merge so that customEquipment overwrites equipmentData
+  const customIds = new Set(customEquipmentList.map(eq => eq.id));
+  const filteredStatic = equipmentData.filter(eq => !customIds.has(eq.id));
+  const allEquipment = [...filteredStatic, ...customEquipmentList];
+  
   const equipment = allEquipment.find(eq => eq.id === id);
 
   useEffect(() => {
@@ -232,6 +240,12 @@ const EquipmentDetail = () => {
             <button onClick={handleDownloadDatasheet} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
               <Download size={20} /> โหลด Datasheet (PDF)
             </button>
+            <button 
+              onClick={() => setShowEditModal(true)}
+              style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', transition: 'all 0.2s ease' }}
+            >
+              <Pencil size={20} /> แก้ไขข้อมูล
+            </button>
             {equipment.isCustom && (
               <button 
                 onClick={handleDelete}
@@ -293,6 +307,18 @@ const EquipmentDetail = () => {
         </div>
       </div>
     </div>
+
+    {showEditModal && (
+      <AddEquipmentModal 
+        categoryId={equipment.category}
+        initialData={equipment}
+        onClose={() => setShowEditModal(false)}
+        onSave={(data) => {
+          addCustomEquipment(data);
+          setShowEditModal(false);
+        }}
+      />
+    )}
 
     {/* --- Print View Section (Hidden normally, shown when printing) --- */}
     {isPrinting && (

@@ -215,7 +215,7 @@ const EquipmentDetail = () => {
             <p style={{ color: 'var(--text-tertiary)', fontSize: '1.1rem', marginBottom: '2rem' }}>{equipment.nameEng}</p>
           </div>
           
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
             <button 
               onClick={() => {
                 toggleFavorite(id);

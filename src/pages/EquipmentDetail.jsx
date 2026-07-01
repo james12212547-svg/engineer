@@ -215,43 +215,86 @@ const EquipmentDetail = () => {
             <p style={{ color: 'var(--text-tertiary)', fontSize: '1.1rem', marginBottom: '2rem' }}>{equipment.nameEng}</p>
           </div>
           
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <button 
               onClick={() => {
                 toggleFavorite(id);
                 toast.success(isFav ? 'ลบออกจากรายการโปรด' : 'เพิ่มลงในรายการโปรดแล้ว');
               }} 
               style={{ 
-                background: isFav ? 'var(--accent-primary)' : 'transparent', 
-                color: isFav ? 'white' : 'var(--accent-primary)', 
-                border: '2px solid var(--accent-primary)', 
-                padding: '0.75rem 1.5rem', 
-                borderRadius: '8px', 
+                background: isFav ? 'rgba(239, 68, 68, 0.1)' : 'transparent', 
+                color: isFav ? '#ef4444' : 'var(--text-secondary)', 
+                border: isFav ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid var(--border-color)', 
+                padding: '0.6rem 1.25rem', 
+                borderRadius: '2rem', 
                 cursor: 'pointer', 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '0.5rem', 
-                fontWeight: 'bold',
+                gap: '0.4rem', 
+                fontWeight: '500',
+                fontSize: '0.9rem',
                 transition: 'all 0.2s ease'
               }}
             >
-              <Heart size={20} fill={isFav ? 'white' : 'none'} /> {isFav ? 'เลิกถูกใจ' : 'ถูกใจ'}
+              <Heart size={18} fill={isFav ? '#ef4444' : 'none'} color={isFav ? '#ef4444' : 'currentColor'} /> {isFav ? 'เลิกถูกใจ' : 'ถูกใจ'}
             </button>
-            <button onClick={handleDownloadDatasheet} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
-              <Download size={20} /> โหลด Datasheet (PDF)
+            <button 
+              onClick={handleDownloadDatasheet} 
+              style={{ 
+                background: 'rgba(16, 185, 129, 0.1)', 
+                color: '#10b981', 
+                border: '1px solid rgba(16, 185, 129, 0.3)', 
+                padding: '0.6rem 1.25rem', 
+                borderRadius: '2rem', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                fontWeight: '500',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s ease' 
+              }}
+            >
+              <Download size={18} /> โหลด Datasheet
             </button>
             <button 
               onClick={() => setShowEditModal(true)}
-              style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', transition: 'all 0.2s ease' }}
+              style={{ 
+                background: 'transparent', 
+                color: 'var(--text-primary)', 
+                border: '1px solid var(--border-color)', 
+                padding: '0.6rem 1.25rem', 
+                borderRadius: '2rem', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                fontWeight: '500',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s ease' 
+              }}
             >
-              <Pencil size={20} /> แก้ไขข้อมูล
+              <Pencil size={18} /> แก้ไขข้อมูล
             </button>
             {equipment.isCustom && (
               <button 
                 onClick={handleDelete}
-                style={{ background: 'transparent', color: '#ef4444', border: '2px solid #ef4444', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', transition: 'all 0.2s ease' }}
+                style={{ 
+                  background: 'transparent', 
+                  color: '#ef4444', 
+                  border: '1px dashed rgba(239, 68, 68, 0.5)', 
+                  padding: '0.6rem 1.25rem', 
+                  borderRadius: '2rem', 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.4rem', 
+                  fontWeight: '500',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.2s ease' 
+                }}
               >
-                ลบข้อมูลนี้
+                ลบข้อมูล
               </button>
             )}
           </div>

@@ -1,10 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import { Home, List, BookOpen, Sun, Moon, ClipboardList, Heart } from 'lucide-react';
+import { Home, List, BookOpen, Settings as SettingsIcon, ClipboardList, Heart } from 'lucide-react';
 import useStore from '../store/useStore';
 
 const Navigation = () => {
-  const theme = useStore(state => state.theme);
-  const toggleTheme = useStore(state => state.toggleTheme);
   const favorites = useStore(state => state.favorites);
   return (
     <nav className="nav-bar">
@@ -34,14 +32,10 @@ const Navigation = () => {
         <span>โปรด ({favorites.length})</span>
       </NavLink>
       
-      <button 
-        onClick={toggleTheme} 
-        className="nav-item" 
-        style={{ background: 'transparent', border: 'none', cursor: 'pointer', outline: 'none' }}
-      >
-        {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
-        <span>{theme === 'dark' ? 'สว่าง' : 'มืด'}</span>
-      </button>
+      <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <SettingsIcon size={24} />
+        <span>ตั้งค่า</span>
+      </NavLink>
     </nav>
   );
 };

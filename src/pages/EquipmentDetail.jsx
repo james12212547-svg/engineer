@@ -4,6 +4,7 @@ import { ArrowLeft, Zap, Info, Settings, AlertTriangle, Upload, Image as ImageIc
 import toast from 'react-hot-toast';
 import { equipmentData, categories } from '../data/equipment';
 import { saveImage, loadImage } from '../utils/db';
+import { compressImage } from '../utils/imageUtils';
 import useStore from '../store/useStore';
 
 const EquipmentDetail = () => {
@@ -36,22 +37,18 @@ const EquipmentDetail = () => {
 
   if (!equipment) return <div>ไม่พบข้อมูลอุปกรณ์</div>;
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const base64String = event.target.result;
-        try {
-          await saveImage(id, base64String);
-          setLocalImage(base64String);
-          toast.success('อัปโหลดรูปภาพสำเร็จ!');
-        } catch (error) {
-          console.error('Error saving image to IndexedDB:', error);
-          toast.error('เกิดข้อผิดพลาดในการบันทึกรูปภาพครับ พื้นที่อาจจะเต็มจริงๆ');
-        }
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedBase64 = await compressImage(file);
+        await saveImage(id, compressedBase64);
+        setLocalImage(compressedBase64);
+        toast.success('อัปโหลดรูปภาพสำเร็จ!');
+      } catch (error) {
+        console.error('Error saving image to IndexedDB:', error);
+        toast.error('เกิดข้อผิดพลาดในการบันทึกรูปภาพครับ พื้นที่อาจจะเต็มจริงๆ');
+      }
     }
     // รีเซ็ตค่า input เพื่อให้สามารถเลือกไฟล์เดิมซ้ำได้ (แก้ปัญหาเปลี่ยนรูปเดิมแล้วเงียบ)
     if (fileInputRef.current) {

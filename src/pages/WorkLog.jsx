@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Camera, Image as ImageIcon, Save, Trash2, Plus, X, ClipboardList, Printer, Search, Database, Download, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAllImages, saveMultipleImages } from '../utils/db';
+import { compressImage } from '../utils/imageUtils';
 
 // --- IndexedDB Utility Functions ---
 const DB_NAME = 'EngineeringWorkLogDB';
@@ -105,15 +106,17 @@ const WorkLog = () => {
     fetchLogs();
   }, []);
 
-  const handleImageChange = (e, type) => {
+  const handleImageChange = async (e, type) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, [type]: reader.result }));
-        setPreview(prev => ({ ...prev, [type.replace('Img', '')]: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedBase64 = await compressImage(file);
+        setFormData(prev => ({ ...prev, [type]: compressedBase64 }));
+        setPreview(prev => ({ ...prev, [type.replace('Img', '')]: compressedBase64 }));
+      } catch (error) {
+        console.error("Compression error:", error);
+        toast.error('ไม่สามารถประมวลผลรูปภาพได้');
+      }
     }
   };
 

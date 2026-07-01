@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import useStore from './store/useStore';
@@ -22,10 +23,24 @@ import PfcCalculator from './pages/PfcCalculator';
 import VoltageDrop from './pages/VoltageDrop';
 import LoadSchedule from './pages/LoadSchedule';
 import Favorites from './pages/Favorites';
+import Settings from './pages/Settings';
+import ReloadPrompt from './components/ReloadPrompt';
 
 function App() {
   const isAuthenticated = useStore(state => state.isAuthenticated);
   const login = useStore(state => state.login);
+  const loadCustomEquipment = useStore(state => state.loadCustomEquipment);
+  const theme = useStore(state => state.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadCustomEquipment();
+    }
+  }, [isAuthenticated, loadCustomEquipment]);
 
   if (!isAuthenticated) {
     return <Login onLogin={login} />;
@@ -34,6 +49,7 @@ function App() {
   return (
     <Router>
       <Toaster position="bottom-right" toastOptions={{ style: { background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' } }} />
+      <ReloadPrompt />
       <div className="app-container" style={{ transition: 'background-color 0.3s ease, color 0.3s ease' }}>
         <Navigation />
         <main className="main-content">
@@ -56,6 +72,7 @@ function App() {
             <Route path="/learning/3d" element={<ModelViewer />} />
             <Route path="/work-log" element={<WorkLog />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </main>
         <AIChatbot />

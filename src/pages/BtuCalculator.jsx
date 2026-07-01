@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Thermometer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { calculateBtuSizing } from '../utils/engineering/btuCalc';
 
 const BtuCalculator = () => {
   const navigate = useNavigate();
@@ -12,42 +13,10 @@ const BtuCalculator = () => {
 
   const calculateBTU = (e) => {
     e.preventDefault();
-    const w = parseFloat(width);
-    const l = parseFloat(length);
-    if (isNaN(w) || isNaN(l) || w <= 0 || l <= 0) return;
-
-    const area = w * l;
-    
-    // Base multiplier based on room type
-    let multiplier = 750; 
-    if (roomType === 'bedroom') multiplier = 700;
-    if (roomType === 'living') multiplier = 800;
-    if (roomType === 'office') multiplier = 900;
-
-    // Sun exposure adjustment
-    if (sunExposure === 'high') {
-      multiplier += 100;
+    const calculationResult = calculateBtuSizing(width, length, roomType, sunExposure);
+    if (calculationResult) {
+      setResult(calculationResult);
     }
-
-    const calculatedBTU = Math.ceil(area * multiplier);
-    
-    // Recommend standard BTU sizes
-    let recommendedSize = 9000;
-    const sizes = [9000, 12000, 15000, 18000, 24000, 30000, 36000, 42000, 48000];
-    
-    for (let size of sizes) {
-      if (calculatedBTU <= size) {
-        recommendedSize = size;
-        break;
-      }
-    }
-    if (calculatedBTU > 48000) recommendedSize = calculatedBTU;
-
-    setResult({
-      area: area.toFixed(1),
-      calculatedBTU,
-      recommendedSize
-    });
   };
 
   return (

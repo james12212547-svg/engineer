@@ -48,15 +48,21 @@ const CategoryGrid = () => {
     }
   }, [categoryId]);
   
-  // Apply Search filter
   if (searchQuery.trim() !== '') {
     const lowerQuery = searchQuery.toLowerCase();
-    filteredEquipment = filteredEquipment.filter(eq => 
-      eq.name.toLowerCase().includes(lowerQuery) || 
-      eq.nameEng.toLowerCase().includes(lowerQuery) ||
-      eq.abbreviation.toLowerCase().includes(lowerQuery) ||
-      eq.function.toLowerCase().includes(lowerQuery)
-    );
+    filteredEquipment = filteredEquipment.filter(eq => {
+      const matchName = eq.name?.toLowerCase().includes(lowerQuery);
+      const matchNameEng = eq.nameEng?.toLowerCase().includes(lowerQuery);
+      const matchAbbrev = eq.abbreviation?.toLowerCase().includes(lowerQuery);
+      const matchFunc = eq.function?.toLowerCase().includes(lowerQuery);
+      
+      const matchSpecs = eq.specs?.some(spec => 
+        spec.label?.toLowerCase().includes(lowerQuery) || 
+        spec.value?.toLowerCase().includes(lowerQuery)
+      );
+
+      return matchName || matchNameEng || matchAbbrev || matchFunc || matchSpecs;
+    });
   }
   
   // Sort filter

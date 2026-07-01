@@ -1,55 +1,82 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { saveCustomEquipmentDB, deleteCustomEquipmentDB, getAllCustomEquipmentDB } from '../utils/db';
 
-const useStore = create((set) => ({
-  // --- Theme State ---
-  theme: localStorage.getItem('theme') || 'dark',
-  toggleTheme: () => set((state) => {
-    const newTheme = state.theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    return { theme: newTheme };
-  }),
+const useStore = create(
+  persist(
+    (set) => ({
+      // --- Theme State ---
+      theme: 'dark',
+      toggleTheme: () => set((state) => {
+        const newTheme = state.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        return { theme: newTheme };
+      }),
 
-  // --- Auth State ---
-  isAuthenticated: sessionStorage.getItem('auth') === 'true',
-  login: () => {
-    sessionStorage.setItem('auth', 'true');
-    set({ isAuthenticated: true });
-  },
-  logout: () => {
-    sessionStorage.removeItem('auth');
-    set({ isAuthenticated: false });
-  },
+      // --- Favorites State ---
+      favorites: [],
+      toggleFavorite: (equipmentId) => set((state) => {
+        const isFav = state.favorites.includes(equipmentId);
+        let newFavorites;
+        if (isFav) {
+          newFavorites = state.favorites.filter(id => id !== equipmentId);
+        } else {
+          newFavorites = [...state.favorites, equipmentId];
+        }
+        return { favorites: newFavorites };
+      }),
 
-  // --- Favorites State ---
-  favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
-  toggleFavorite: (equipmentId) => set((state) => {
-    const isFav = state.favorites.includes(equipmentId);
-    let newFavorites;
-    if (isFav) {
-      newFavorites = state.favorites.filter(id => id !== equipmentId);
-    } else {
-      newFavorites = [...state.favorites, equipmentId];
+      // --- Auth State --- (Manual sessionStorage)
+      isAuthenticated: sessionStorage.getItem('auth') === 'true',
+      login: () => {
+        sessionStorage.setItem('auth', 'true');
+        set({ isAuthenticated: true });
+      },
+      logout: () => {
+        sessionStorage.removeItem('auth');
+        set({ isAuthenticated: false });
+      },
+
+      // --- Custom Equipment State (Memory only, synced to IndexedDB via actions) ---
+      customEquipment: [],
+      loadCustomEquipment: async () => {
+        try {
+          const eqList = await getAllCustomEquipmentDB();
+          set({ customEquipment: eqList });
+        } catch (error) {
+          console.error("Failed to load custom equipment:", error);
+        }
+      },
+      addCustomEquipment: async (equipment) => {
+        try {
+          await saveCustomEquipmentDB(equipment);
+          set((state) => ({ customEquipment: [...state.customEquipment, equipment] }));
+        } catch (error) {
+          console.error("Failed to add custom equipment:", error);
+          throw error;
+        }
+      },
+      deleteCustomEquipment: async (id) => {
+        try {
+          await deleteCustomEquipmentDB(id);
+          set((state) => ({ customEquipment: state.customEquipment.filter(eq => eq.id !== id) }));
+        } catch (error) {
+          console.error("Failed to delete custom equipment:", error);
+          throw error;
+        }
+      },
+    }),
+    {
+      name: 'equipment-store-persist', // name of the item in the storage (must be unique)
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ theme: state.theme, favorites: state.favorites }), // Only persist these fields
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          document.documentElement.setAttribute('data-theme', state.theme);
+        }
+      }
     }
-    localStorage.setItem('favorites', JSON.stringify(newFavorites));
-    return { favorites: newFavorites };
-  }),
-
-  // --- Custom Equipment State ---
-  customEquipment: JSON.parse(localStorage.getItem('customEquipment') || '[]'),
-  addCustomEquipment: (equipment) => set((state) => {
-    const newEquipment = [...state.customEquipment, equipment];
-    localStorage.setItem('customEquipment', JSON.stringify(newEquipment));
-    return { customEquipment: newEquipment };
-  }),
-  deleteCustomEquipment: (id) => set((state) => {
-    const newEquipment = state.customEquipment.filter(eq => eq.id !== id);
-    localStorage.setItem('customEquipment', JSON.stringify(newEquipment));
-    return { customEquipment: newEquipment };
-  }),
-}));
-
-// Initialize theme on load
-document.documentElement.setAttribute('data-theme', useStore.getState().theme);
+  )
+);
 
 export default useStore;

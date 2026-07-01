@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { X, Upload, Plus, Trash2, Camera, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { compressImage } from '../utils/imageUtils';
 
 const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -36,19 +37,16 @@ const AddEquipmentModal = ({ categoryId, onClose, onSave }) => {
     setSpecs(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleImageCapture = (e) => {
+  const handleImageCapture = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error('ขนาดรูปภาพต้องไม่เกิน 2MB');
-        return;
+      try {
+        const compressedBase64 = await compressImage(file);
+        setImagePreview(compressedBase64);
+      } catch (error) {
+        console.error("Compression error:", error);
+        toast.error('ไม่สามารถประมวลผลรูปภาพได้');
       }
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 

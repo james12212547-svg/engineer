@@ -1,15 +1,20 @@
 export const DB_NAME = 'EquipmentAppDB';
 export const STORE_NAME = 'images';
+export const CUSTOM_EQ_STORE = 'custom_equipment';
 
 export const initDB = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    // Increased version to 2 to support custom_equipment store
+    const request = indexedDB.open(DB_NAME, 2);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (e) => {
       const db = e.target.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME);
+      }
+      if (!db.objectStoreNames.contains(CUSTOM_EQ_STORE)) {
+        db.createObjectStore(CUSTOM_EQ_STORE, { keyPath: 'id' });
       }
     };
   });
@@ -73,5 +78,43 @@ export const saveMultipleImages = async (imagesObj) => {
     
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
+  });
+};
+
+// --- Custom Equipment ---
+
+export const saveCustomEquipmentDB = async (equipment) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(CUSTOM_EQ_STORE, 'readwrite');
+    const store = tx.objectStore(CUSTOM_EQ_STORE);
+    store.put(equipment);
+    
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const deleteCustomEquipmentDB = async (id) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(CUSTOM_EQ_STORE, 'readwrite');
+    const store = tx.objectStore(CUSTOM_EQ_STORE);
+    store.delete(id);
+    
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const getAllCustomEquipmentDB = async () => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(CUSTOM_EQ_STORE, 'readonly');
+    const store = tx.objectStore(CUSTOM_EQ_STORE);
+    const request = store.getAll();
+    
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
   });
 };

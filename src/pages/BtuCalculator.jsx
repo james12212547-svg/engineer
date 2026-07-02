@@ -8,13 +8,14 @@ const BtuCalculator = () => {
   const navigate = useNavigate();
   const [width, setWidth] = useState('');
   const [length, setLength] = useState('');
+  const [height, setHeight] = useState('');
   const [sunExposure, setSunExposure] = useState('normal'); // normal, high
   const [roomType, setRoomType] = useState('bedroom'); // bedroom, living, office
   const [result, setResult] = useState(null);
 
   const calculateBTU = (e) => {
     e.preventDefault();
-    const calculationResult = calculateBtuSizing(width, length, roomType, sunExposure);
+    const calculationResult = calculateBtuSizing(width, length, height, roomType, sunExposure);
     if (calculationResult) {
       setResult(calculationResult);
     }
@@ -36,14 +37,18 @@ const BtuCalculator = () => {
         <div className="equipment-card" style={{ padding: '2rem' }}>
           <form onSubmit={calculateBTU} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{ flex: 1 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
+              <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>กว้าง (เมตร)</label>
                 <input type="number" step="0.1" value={width} onChange={(e) => setWidth(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
               </div>
-              <div style={{ flex: 1 }}>
+              <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>ยาว (เมตร)</label>
                 <input type="number" step="0.1" value={length} onChange={(e) => setLength(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>สูง (เมตร) - ตัวเลือก</label>
+                <input type="number" step="0.1" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="เช่น 2.8" style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
               </div>
             </div>
 
@@ -53,15 +58,27 @@ const BtuCalculator = () => {
                 <option value="bedroom">ห้องนอน</option>
                 <option value="living">ห้องนั่งเล่น / ห้องรับแขก</option>
                 <option value="office">ห้องทำงาน / ออฟฟิศ</option>
+                <option value="kitchen">ห้องครัว / ห้องอาหาร (ความร้อนสูง)</option>
               </select>
             </div>
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>การโดนแดด</label>
               <select value={sunExposure} onChange={(e) => setSunExposure(e.target.value)} style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-                <option value="normal">ปกติ (ไม่โดนแดดจัด)</option>
-                <option value="high">โดนแดดจัด (ทิศตะวันตก/ใต้/ใต้หลังคา)</option>
+                <option value="normal">ปกติ (ห้องทิศเหนือ/ตะวันออก ไม่โดนแดดบ่าย)</option>
+                <option value="high">โดนแดดจัด (ห้องทิศตะวันตก/ใต้ หรือกระจกเยอะ)</option>
               </select>
+            </div>
+            
+            <div style={{ padding: '1rem', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
+              <p style={{ margin: '0 0 0.5rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>ℹ️ เกณฑ์ค่าตัวคูณภาระความร้อน (Cooling Load Factor) โดยประมาณ:</p>
+              <ul style={{ margin: 0, paddingLeft: '1.5rem', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <li>ห้องนอน (ไม่โดนแดด): 700 - 800</li>
+                <li>ห้องนอน (โดนแดด): 800 - 900</li>
+                <li>ห้องทำงาน/นั่งเล่น (ไม่โดนแดด): 800 - 900</li>
+                <li>ห้องทำงาน/นั่งเล่น (โดนแดด): 900 - 1000+</li>
+                <li style={{ gridColumn: '1 / -1' }}>ห้องครัว/ห้องอาหาร: 900 - 1000+ (เนื่องจากมีความร้อนสูง)</li>
+              </ul>
             </div>
             
             <button type="submit" style={{ background: 'linear-gradient(135deg, #00F0FF 0%, #0080FF 100%)', color: 'white', padding: '1rem', borderRadius: '8px', border: 'none', fontSize: '1.1rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
@@ -75,14 +92,31 @@ const BtuCalculator = () => {
             <h3 className="text-gradient-ac" style={{ marginBottom: '1.5rem' }}>ผลการคำนวณ</h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>พื้นที่ห้อง</p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{result.area} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>ตร.ม.</span></p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>พื้นที่ห้อง</p>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{result.area} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>ตร.ม.</span></p>
+                </div>
+                {result.volume && (
+                  <div>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ปริมาตรห้อง (มิติ 3D)</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: result.isHighCeiling ? 'var(--accent-solar)' : 'inherit' }}>
+                      {result.volume} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>ลบ.ม.</span>
+                      {result.isHighCeiling && <span style={{ fontSize: '0.8rem', marginLeft: '0.5rem', background: 'rgba(255, 165, 0, 0.2)', padding: '2px 6px', borderRadius: '4px' }}>เพดานสูง (Double Volume)</span>}
+                    </p>
+                  </div>
+                )}
               </div>
               
-              <div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ค่า <GlossaryLink term="BTU" /> ที่ต้องการ (ตามสูตร)</p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{result.calculatedBTU.toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>BTU/hr</span></p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ตัวคูณภาระความร้อน (Cooling Load)</p>
+                  <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{result.multiplier} <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>BTU/ตร.ม.</span></p>
+                </div>
+                <div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ค่า <GlossaryLink term="BTU" /> ที่ต้องการ (ตามสูตร)</p>
+                  <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{result.calculatedBTU.toLocaleString()} <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>BTU/hr</span></p>
+                </div>
               </div>
 
               <div style={{ padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--accent-ac)' }}>

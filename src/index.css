@@ -359,7 +359,7 @@ h1, h2, h3, h4, h5, h6 {
   .nav-bar {
     position: sticky;
     top: 0;
-    width: 250px;
+    width: 80px;
     height: 100vh;
     flex-direction: column;
     justify-content: flex-start;
@@ -367,8 +367,16 @@ h1, h2, h3, h4, h5, h6 {
     border-top: none;
     border-right: 1px solid var(--glass-border);
     gap: 1rem;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    z-index: 100;
   }
   
+  .nav-bar:hover {
+    width: 250px;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+  }
+
   .nav-item {
     flex-direction: row;
     padding: 1rem;
@@ -376,6 +384,17 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     font-size: 1rem;
     gap: 1rem;
+    white-space: nowrap;
+    align-items: center;
+  }
+  
+  .nav-item span {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .nav-bar:hover .nav-item span {
+    opacity: 1;
   }
   
   .nav-item:hover {
@@ -476,4 +495,40 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 2rem;
     right: 2rem;
   }
+}
+
+/* Form Inputs Global Fix */
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: var(--text-primary) !important;
+  outline: none;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:focus {
+  border-color: var(--accent-primary) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme='light'] input:not([type="checkbox"]):not([type="radio"]), 
+[data-theme='light'] select, 
+[data-theme='light'] textarea {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] input:not([type="checkbox"]):not([type="radio"]):focus, 
+[data-theme='light'] select:focus, 
+[data-theme='light'] textarea:focus {
+  border-color: var(--accent-primary) !important;
+  background: var(--bg-primary) !important;
+}
+
+/* Fix for Select Dropdown Options (White on White issue) */
+option {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] option {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
 }

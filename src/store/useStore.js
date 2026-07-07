@@ -71,11 +71,23 @@ const useStore = create(
           throw error;
         }
       },
+
+      // --- Maintenance Schedule State ---
+      schedules: [],
+      addSchedule: (schedule) => set((state) => ({ 
+        schedules: [...state.schedules, { ...schedule, id: Date.now().toString() }] 
+      })),
+      updateSchedule: (id, updatedSchedule) => set((state) => ({
+        schedules: state.schedules.map(s => s.id === id ? { ...s, ...updatedSchedule } : s)
+      })),
+      deleteSchedule: (id) => set((state) => ({
+        schedules: state.schedules.filter(s => s.id !== id)
+      })),
     }),
     {
       name: 'equipment-store-persist', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ theme: state.theme, favorites: state.favorites }), // Only persist these fields
+      partialize: (state) => ({ theme: state.theme, favorites: state.favorites, schedules: state.schedules }), // Only persist these fields
       onRehydrateStorage: () => (state) => {
         if (state) {
           document.documentElement.setAttribute('data-theme', state.theme);

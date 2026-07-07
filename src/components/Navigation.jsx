@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, List, BookOpen, Settings as SettingsIcon, ClipboardList, Heart } from 'lucide-react';
+import { Home, List, BookOpen, Settings as SettingsIcon, ClipboardList, Heart, Calculator, Calendar, Users } from 'lucide-react';
 import useStore from '../store/useStore';
 
 const Navigation = () => {
@@ -15,6 +15,13 @@ const Navigation = () => {
         <span>หน้าแรก</span>
       </NavLink>
       <NavLink 
+        to="/calculators" 
+        className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+      >
+        <Calculator size={24} />
+        <span>คำนวณ</span>
+      </NavLink>
+      <NavLink 
         to="/learning" 
         className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
       >
@@ -22,9 +29,19 @@ const Navigation = () => {
         <span>ความรู้</span>
       </NavLink>
 
+      <NavLink to="/schedule" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <Calendar size={24} />
+        <span>ตารางงาน</span>
+      </NavLink>
+
       <NavLink to="/work-log" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
         <ClipboardList size={24} />
         <span>จดงาน</span>
+      </NavLink>
+
+      <NavLink to="/customer-history" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <Users size={24} />
+        <span>ประวัติลูกค้า</span>
       </NavLink>
 
       <NavLink to="/favorites" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ position: 'relative' }}>

@@ -2,11 +2,12 @@ export const DB_NAME = 'EquipmentAppDB';
 export const STORE_NAME = 'images';
 export const CUSTOM_EQ_STORE = 'custom_equipment';
 export const LAB_EXPERIMENTS_STORE = 'lab_experiments';
+export const MODELS_STORE = '3d_models';
 
 export const initDB = () => {
   return new Promise((resolve, reject) => {
-    // Increased version to 3 to support lab_experiments store
-    const request = indexedDB.open(DB_NAME, 3);
+    // Increased version to 4 to support 3d_models store
+    const request = indexedDB.open(DB_NAME, 4);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (e) => {
@@ -19,6 +20,9 @@ export const initDB = () => {
       }
       if (!db.objectStoreNames.contains(LAB_EXPERIMENTS_STORE)) {
         db.createObjectStore(LAB_EXPERIMENTS_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(MODELS_STORE)) {
+        db.createObjectStore(MODELS_STORE, { keyPath: 'id' });
       }
     };
   });
@@ -156,6 +160,101 @@ export const getAllLabExperimentsDB = async () => {
     const store = tx.objectStore(LAB_EXPERIMENTS_STORE);
     const request = store.getAll();
     
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+// --- 3D Models (stored as ArrayBuffer) ---
+
+export const saveModelDB = async (model) => {
+  // model: { id, name, buffer (ArrayBuffer) }
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MODELS_STORE, 'readwrite');
+    const store = tx.objectStore(MODELS_STORE);
+    store.put(model);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const deleteModelDB = async (id) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MODELS_STORE, 'readwrite');
+    const store = tx.objectStore(MODELS_STORE);
+    store.delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const getAllModelsDB = async () => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MODELS_STORE, 'readonly');
+    const store = tx.objectStore(MODELS_STORE);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const getModelDB = async (id) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MODELS_STORE, 'readonly');
+    const store = tx.objectStore(MODELS_STORE);
+    const request = store.get(id);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const updateModelAnnotationsDB = async (id, annotations) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MODELS_STORE, 'readwrite');
+    const store = tx.objectStore(MODELS_STORE);
+    const request = store.get(id);
+    
+    request.onsuccess = () => {
+      const model = request.result;
+      if (!model) return reject(new Error('Model not found'));
+      model.annotations = annotations;
+      const updateRequest = store.put(model);
+      updateRequest.onsuccess = () => resolve();
+      updateRequest.onerror = () => reject(updateRequest.error);
+    };
+    request.onerror = () => reject(request.error);
+  });
+};
+
+// --- WorkLog Database (used by WorkLog.jsx, accessible here for History) ---
+const WORKLOG_DB_NAME = 'EngineeringWorkLogDB';
+const WORKLOG_STORE_NAME = 'worklogs';
+
+const initWorkLogDB = () => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(WORKLOG_DB_NAME, 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(WORKLOG_STORE_NAME)) {
+        db.createObjectStore(WORKLOG_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const getWorkLogsDB = async () => {
+  const db = await initWorkLogDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(WORKLOG_STORE_NAME, 'readonly');
+    const store = tx.objectStore(WORKLOG_STORE_NAME);
+    const request = store.getAll();
     request.onsuccess = () => resolve(request.result || []);
     request.onerror = () => reject(request.error);
   });

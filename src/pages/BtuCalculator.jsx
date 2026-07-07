@@ -28,7 +28,7 @@ const BtuCalculator = () => {
           <ArrowLeft size={24} />
         </button>
         <div>
-          <h1 className="text-gradient-ac" style={{ marginBottom: 0, fontSize: '2rem' }}>โปรแกรมคำนวณ <GlossaryLink term="BTU" /> แอร์</h1>
+          <h1 className="text-gradient-ac" style={{ marginBottom: 0, fontSize: '2rem' }}>โปรแกรมคำนวณ BTU แอร์</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Air Conditioner BTU Calculator</p>
         </div>
       </div>
@@ -40,21 +40,21 @@ const BtuCalculator = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>กว้าง (เมตร)</label>
-                <input type="number" step="0.1" value={width} onChange={(e) => setWidth(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                <input type="number" step="0.1" value={width} onChange={(e) => setWidth(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }} />
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>ยาว (เมตร)</label>
-                <input type="number" step="0.1" value={length} onChange={(e) => setLength(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                <input type="number" step="0.1" value={length} onChange={(e) => setLength(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }} />
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>สูง (เมตร) - ตัวเลือก</label>
-                <input type="number" step="0.1" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="เช่น 2.8" style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                <input type="number" step="0.1" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="เช่น 2.8" style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }} />
               </div>
             </div>
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>ประเภทห้อง</label>
-              <select value={roomType} onChange={(e) => setRoomType(e.target.value)} style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+              <select value={roomType} onChange={(e) => setRoomType(e.target.value)} style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }}>
                 <option value="bedroom">ห้องนอน</option>
                 <option value="living">ห้องนั่งเล่น / ห้องรับแขก</option>
                 <option value="office">ห้องทำงาน / ออฟฟิศ</option>
@@ -64,7 +64,7 @@ const BtuCalculator = () => {
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>การโดนแดด</label>
-              <select value={sunExposure} onChange={(e) => setSunExposure(e.target.value)} style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+              <select value={sunExposure} onChange={(e) => setSunExposure(e.target.value)} style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }}>
                 <option value="normal">ปกติ (ห้องทิศเหนือ/ตะวันออก ไม่โดนแดดบ่าย)</option>
                 <option value="high">โดนแดดจัด (ห้องทิศตะวันตก/ใต้ หรือกระจกเยอะ)</option>
               </select>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Zap, Info, Settings, AlertTriangle, Upload, Image as ImageIcon, Download, FileText, ChevronRight, Home, Heart } from 'lucide-react';
+import { ArrowLeft, Zap, Info, Settings, AlertTriangle, Upload, Image as ImageIcon, Download, FileText, ChevronRight, Home, Heart, Box } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { equipmentData, categories } from '../data/equipment';
 import { saveImage, loadImage } from '../utils/db';
@@ -256,6 +256,28 @@ const EquipmentDetail = () => {
               }}
             >
               <Download size={18} /> โหลด Datasheet
+            </button>
+            <button 
+              onClick={() => {
+                const modelFile = equipment.category === 'air-conditioning' ? 'ac_compressor.glb' : 'solar_panel.glb';
+                navigate(`/learning/3d?model=${modelFile}`);
+              }} 
+              style={{ 
+                background: 'rgba(0, 240, 255, 0.1)', 
+                color: 'var(--accent-ac)', 
+                border: '1px solid rgba(0, 240, 255, 0.3)', 
+                padding: '0.6rem 1.25rem', 
+                borderRadius: '2rem', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                fontWeight: '500',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s ease' 
+              }}
+            >
+              <Box size={18} /> ดู 3D Model
             </button>
             <button 
               onClick={() => setShowEditModal(true)}

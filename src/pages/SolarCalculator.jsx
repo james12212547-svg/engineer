@@ -161,7 +161,7 @@ const InvestmentChart = ({ result }) => {
               type="number" 
               value={returnRate} 
               onChange={e => setReturnRate(Number(e.target.value))}
-              style={{ width: '90px', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
+              style={{ width: '90px', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -170,7 +170,7 @@ const InvestmentChart = ({ result }) => {
               type="number" 
               value={years} 
               onChange={e => setYears(Number(e.target.value))}
-              style={{ width: '90px', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
+              style={{ width: '90px', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>
         </div>
@@ -287,7 +287,7 @@ const SolarCalculator = () => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder={calcMode === 'bill' ? 'เช่น 3500' : 'เช่น 53.92'}
-                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '1.1rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', fontSize: '1.1rem', boxSizing: 'border-box', outline: 'none' }}
                   required
                 />
               </div>
@@ -301,7 +301,7 @@ const SolarCalculator = () => {
                   step="0.1"
                   value={inflationRate}
                   onChange={(e) => setInflationRate(Number(e.target.value))}
-                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '1.1rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', fontSize: '1.1rem', boxSizing: 'border-box', outline: 'none' }}
                   required
                 />
               </div>
@@ -317,7 +317,7 @@ const SolarCalculator = () => {
                 <select
                   value={province}
                   onChange={(e) => setProvince(e.target.value)}
-                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '1rem', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-primary)', fontSize: '1rem', cursor: 'pointer', outline: 'none' }}
                 >
                   {PROVINCE_PSH.map((item, i) =>
                     item.disabled

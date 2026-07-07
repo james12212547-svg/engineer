@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import CategoryGrid from './pages/CategoryGrid';
 import EquipmentDetail from './pages/EquipmentDetail';
 import LearningHub from './pages/LearningHub';
+import CalculatorsHub from './pages/CalculatorsHub';
 import SolarCalculator from './pages/SolarCalculator';
 import Quiz from './pages/Quiz';
 import InteractiveSchematic from './pages/InteractiveSchematic';
@@ -25,6 +26,8 @@ import LoadSchedule from './pages/LoadSchedule';
 import LabLogger from './pages/LabLogger';
 import Favorites from './pages/Favorites';
 import Settings from './pages/Settings';
+import MaintenanceSchedule from './pages/MaintenanceSchedule';
+import CustomerHistory from './pages/CustomerHistory';
 import ReloadPrompt from './components/ReloadPrompt';
 
 function App() {
@@ -58,6 +61,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/category/:categoryId" element={<CategoryGrid />} />
             <Route path="/equipment/:id" element={<EquipmentDetail />} />
+            <Route path="/calculators" element={<CalculatorsHub />} />
             <Route path="/learning" element={<LearningHub />} />
             <Route path="/learning/calculator" element={<SolarCalculator />} />
             <Route path="/learning/quiz" element={<Quiz />} />
@@ -73,6 +77,8 @@ function App() {
             <Route path="/learning/3d" element={<ModelViewer />} />
             <Route path="/learning/lab-logger" element={<LabLogger />} />
             <Route path="/work-log" element={<WorkLog />} />
+            <Route path="/schedule" element={<MaintenanceSchedule />} />
+            <Route path="/customer-history" element={<CustomerHistory />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

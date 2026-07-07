@@ -35,65 +35,9 @@ const LearningHub = () => {
         </Link>
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>2. หมวดเครื่องมือคำนวณ (Calculators)</h2>
-      <div className="grid-3">
-        <Link to="/learning/btu" className="category-card" style={{ padding: '1.5rem', minHeight: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <div style={{ color: 'var(--accent-ac)' }}><Thermometer size={36} /></div>
-          </div>
-          <div className="category-card-content" style={{ textAlign: 'center' }}>
-            <h3 className="text-gradient-ac" style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>คำนวณ BTU แอร์</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>BTU Calculator</p>
-          </div>
-        </Link>
-        <Link to="/learning/calculator" className="category-card" style={{ padding: '1.5rem', minHeight: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <div style={{ color: 'var(--accent-solar)' }}><Calculator size={36} /></div>
-          </div>
-          <div className="category-card-content" style={{ textAlign: 'center' }}>
-            <h3 className="text-gradient-solar" style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>จุดคุ้มทุนโซลาร์</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>Solar ROI Calculator</p>
-          </div>
-        </Link>
-        <Link to="/learning/cable" className="category-card" style={{ padding: '1.5rem', minHeight: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <div style={{ color: 'var(--accent-solar)' }}><Zap size={36} /></div>
-          </div>
-          <div className="category-card-content" style={{ textAlign: 'center' }}>
-            <h3 className="text-gradient-solar" style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>คำนวณขนาดสายไฟ</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>Cable Sizing</p>
-          </div>
-        </Link>
-        <Link to="/learning/pfc" className="category-card" style={{ padding: '1.5rem', minHeight: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <div style={{ color: 'var(--accent-solar)' }}><Zap size={36} /></div>
-          </div>
-          <div className="category-card-content" style={{ textAlign: 'center' }}>
-            <h3 className="text-gradient-solar" style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>คำนวณ PFC</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>Capacitor & ROI</p>
-          </div>
-        </Link>
-        <Link to="/learning/voltage-drop" className="category-card" style={{ padding: '1.5rem', minHeight: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <div style={{ color: 'var(--accent-solar)' }}><ShieldAlert size={36} /></div>
-          </div>
-          <div className="category-card-content" style={{ textAlign: 'center' }}>
-            <h3 className="text-gradient-solar" style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>คำนวณแรงดันตก</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>Voltage Drop</p>
-          </div>
-        </Link>
-        <Link to="/learning/load-schedule" className="category-card" style={{ padding: '1.5rem', minHeight: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <div style={{ color: 'var(--accent-solar)' }}><ListChecks size={36} /></div>
-          </div>
-          <div className="category-card-content" style={{ textAlign: 'center' }}>
-            <h3 className="text-gradient-solar" style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>จัดตารางโหลด</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>Phase Balancing</p>
-          </div>
-        </Link>
-      </div>
 
-      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>3. หมวดการทดสอบ (Assessment)</h2>
+
+      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>2. หมวดการทดสอบ (Assessment)</h2>
       <div className="grid-2">
         <Link to="/learning/quiz" className="category-card" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
@@ -119,7 +63,7 @@ const LearningHub = () => {
         </Link>
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>4. หมวดข้อมูลเชิงลึก (Deep Dive)</h2>
+      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>3. หมวดข้อมูลเชิงลึก (Deep Dive)</h2>
       <div className="grid-2">
         <Link to="/learning/glossary" className="category-card" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
@@ -145,7 +89,7 @@ const LearningHub = () => {
         </Link>
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>5. หมวดเครื่องมือเฉพาะทาง (Specialized Tools)</h2>
+      <h2 style={{ fontSize: '1.5rem', margin: '3rem 0 1rem', color: 'var(--text-primary)' }}>4. หมวดเครื่องมือเฉพาะทาง (Specialized Tools)</h2>
       <div className="grid-2">
         <Link to="/learning/lab-logger" className="category-card" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>

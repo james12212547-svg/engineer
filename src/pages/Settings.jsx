@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Database, Sun, Moon, Info, HardDrive, MessageSquarePlus } from 'lucide-react';
+import { Settings as SettingsIcon, Database, Sun, Moon, Info, HardDrive, MessageSquarePlus, Building2, Bell } from 'lucide-react';
 import useStore from '../store/useStore';
 import toast from 'react-hot-toast';
+import { requestNotificationPermission } from '../utils/notifications';
 
 const Settings = () => {
   const theme = useStore(state => state.theme);
@@ -14,6 +15,31 @@ const Settings = () => {
   // Feedback state
   const [feedback, setFeedback] = useState('');
   const [type, setType] = useState('feedback');
+
+  // Company info (persisted to localStorage)
+  const [company, setCompany] = useState({
+    name: localStorage.getItem('companyName') || '',
+    address: localStorage.getItem('companyAddress') || '',
+    phone: localStorage.getItem('companyPhone') || '',
+    tax: localStorage.getItem('companyTax') || '',
+  });
+
+  const [notifPermission, setNotifPermission] = useState(Notification?.permission || 'default');
+
+  const saveCompanyInfo = () => {
+    localStorage.setItem('companyName', company.name);
+    localStorage.setItem('companyAddress', company.address);
+    localStorage.setItem('companyPhone', company.phone);
+    localStorage.setItem('companyTax', company.tax);
+    toast.success('บันทึกข้อมูลบริษัทแล้ว!');
+  };
+
+  const handleRequestNotif = async () => {
+    const result = await requestNotificationPermission();
+    setNotifPermission(result);
+    if (result === 'granted') toast.success('เปิดการแจ้งเตือนสำเร็จ!');
+    else if (result === 'denied') toast.error('คุณปิดกั้นการแจ้งเตือนไว้ กรุณาเปิดในการตั้งค่าเบราว์เซอร์');
+  };
 
   useEffect(() => {
     const checkStorage = async () => {
@@ -107,6 +133,59 @@ const Settings = () => {
         
         {activeTab === 'general' && (
           <>
+            {/* Company Info */}
+            <div className="glass-panel" style={{ padding: '2rem' }}>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
+                <Building2 size={24} /> ข้อมูลบริษัท / ร้าน
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>ข้อมูลนี้จะแสดงบนใบเสนอราคาและใบแจ้งหนี้ที่คุณออก</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                {[
+                  ['name', 'ชื่อบริษัท / ชื่อร้าน'],
+                  ['phone', 'เบอร์โทรศัพท์'],
+                  ['tax', 'เลขที่ผู้เสียภาษี (ถ้ามี)'],
+                ].map(([key, label]) => (
+                  <div key={key}>
+                    <label style={{ display: 'block', marginBottom: '0.4rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{label}</label>
+                    <input value={company[key]} onChange={e => setCompany(c => ({ ...c, [key]: e.target.value }))}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px' }} />
+                  </div>
+                ))}
+                <div style={{ gridColumn: 'span 2' }}>
+                  <label style={{ display: 'block', marginBottom: '0.4rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ที่อยู่</label>
+                  <input value={company.address} onChange={e => setCompany(c => ({ ...c, address: e.target.value }))}
+                    placeholder="เลขที่ ถนน ตำบล อำเภอ จังหวัด" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px' }} />
+                </div>
+              </div>
+              <button onClick={saveCompanyInfo}
+                style={{ background: 'var(--accent-primary)', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                💾 บันทึกข้อมูลบริษัท
+              </button>
+            </div>
+
+            {/* Notification Settings */}
+            <div className="glass-panel" style={{ padding: '2rem' }}>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
+                <Bell size={24} /> การแจ้งเตือนนัดหมาย
+              </h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 0.5rem', color: 'var(--text-secondary)' }}>แจ้งเตือนล่วงหน้าก่อนถึงงาน</h3>
+                  <p style={{ margin: 0, color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+                    สถานะ: <strong style={{ color: notifPermission === 'granted' ? '#10b981' : '#ef4444' }}>
+                      {notifPermission === 'granted' ? '✅ เปิดใช้งานแล้ว' : notifPermission === 'denied' ? '❌ ถูกปิดกั้น' : '⏸ ยังไม่ได้เปิด'}
+                    </strong>
+                  </p>
+                </div>
+                {notifPermission !== 'granted' && (
+                  <button onClick={handleRequestNotif}
+                    style={{ background: 'var(--accent-primary)', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    🔔 เปิดการแจ้งเตือน
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Theme Settings */}
             <div className="glass-panel" style={{ padding: '2rem' }}>
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>

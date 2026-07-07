@@ -3,11 +3,12 @@ export const STORE_NAME = 'images';
 export const CUSTOM_EQ_STORE = 'custom_equipment';
 export const LAB_EXPERIMENTS_STORE = 'lab_experiments';
 export const MODELS_STORE = '3d_models';
+export const QUOTATIONS_STORE = 'quotations';
+export const INVENTORY_STORE = 'inventory';
 
 export const initDB = () => {
   return new Promise((resolve, reject) => {
-    // Increased version to 4 to support 3d_models store
-    const request = indexedDB.open(DB_NAME, 4);
+    const request = indexedDB.open(DB_NAME, 5);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (e) => {
@@ -23,6 +24,12 @@ export const initDB = () => {
       }
       if (!db.objectStoreNames.contains(MODELS_STORE)) {
         db.createObjectStore(MODELS_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(QUOTATIONS_STORE)) {
+        db.createObjectStore(QUOTATIONS_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(INVENTORY_STORE)) {
+        db.createObjectStore(INVENTORY_STORE, { keyPath: 'id' });
       }
     };
   });
@@ -257,5 +264,69 @@ export const getWorkLogsDB = async () => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result || []);
     request.onerror = () => reject(request.error);
+  });
+};
+
+// --- Quotations ---
+
+export const saveQuotationDB = async (quotation) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(QUOTATIONS_STORE, 'readwrite');
+    tx.objectStore(QUOTATIONS_STORE).put(quotation);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const getAllQuotationsDB = async () => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(QUOTATIONS_STORE, 'readonly');
+    const req = tx.objectStore(QUOTATIONS_STORE).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+};
+
+export const deleteQuotationDB = async (id) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(QUOTATIONS_STORE, 'readwrite');
+    tx.objectStore(QUOTATIONS_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+// --- Inventory ---
+
+export const saveInventoryItemDB = async (item) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(INVENTORY_STORE, 'readwrite');
+    tx.objectStore(INVENTORY_STORE).put(item);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const getAllInventoryDB = async () => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(INVENTORY_STORE, 'readonly');
+    const req = tx.objectStore(INVENTORY_STORE).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+};
+
+export const deleteInventoryItemDB = async (id) => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(INVENTORY_STORE, 'readwrite');
+    tx.objectStore(INVENTORY_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
   });
 };

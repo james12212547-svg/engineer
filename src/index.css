@@ -363,29 +363,42 @@ h1, h2, h3, h4, h5, h6 {
     height: 100vh;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 2rem 1rem;
+    padding: 1.5rem 0.75rem;
     border-top: none;
     border-right: 1px solid var(--glass-border);
-    gap: 1rem;
+    gap: 0.5rem;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    overflow-y: auto;
     z-index: 100;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .nav-bar::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
   }
   
   .nav-bar:hover {
     width: 250px;
     box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-bar:hover::-webkit-scrollbar {
+    display: none;
   }
 
   .nav-item {
     flex-direction: row;
-    padding: 1rem;
+    padding: 0.85rem;
     border-radius: var(--radius-md);
     width: 100%;
     font-size: 1rem;
     gap: 1rem;
     white-space: nowrap;
     align-items: center;
+    flex-shrink: 0;
   }
   
   .nav-item span {

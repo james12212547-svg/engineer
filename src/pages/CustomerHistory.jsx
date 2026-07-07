@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, User, Clock, ClipboardList, CheckCircle, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Search, User, Clock, ClipboardList, CheckCircle, ChevronRight, ArrowLeft, Printer, MapPin, QrCode, X } from 'lucide-react';
 import useStore from '../store/useStore';
 import { getWorkLogsDB } from '../utils/db';
 
@@ -8,6 +8,7 @@ const CustomerHistory = () => {
   const [workLogs, setWorkLogs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showQrModal, setShowQrModal] = useState(null); // customer name
 
   useEffect(() => {
     getWorkLogsDB().then(logs => {
@@ -120,6 +121,13 @@ const CustomerHistory = () => {
                   <span style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '0.75rem' }}>ยอดรวม</span>
                   <strong style={{ color: 'var(--accent-solar)' }}>฿{customer.totalSpent.toLocaleString()}</strong>
                 </div>
+                <button
+                  onClick={e => { e.stopPropagation(); setShowQrModal(customer.name); }}
+                  title="QR Code"
+                  style={{ background: 'rgba(139,92,246,0.1)', border: 'none', color: '#8b5cf6', padding: '0.4rem', borderRadius: '8px', cursor: 'pointer' }}
+                >
+                  <QrCode size={20} />
+                </button>
                 <ChevronRight color="var(--text-tertiary)" />
               </div>
             </div>
@@ -129,8 +137,33 @@ const CustomerHistory = () => {
     </div>
   );
 
+  // QR Modal
+  const renderQrModal = () => {
+    if (!showQrModal) return null;
+    const qrData = encodeURIComponent(`${window.location.origin}/customer-history?name=${encodeURIComponent(showQrModal)}`);
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${qrData}&bgcolor=ffffff&color=1e40af&margin=10`;
+    return (
+      <div onClick={() => setShowQrModal(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '20px', padding: '2rem', maxWidth: '360px', width: '100%', textAlign: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h3 style={{ margin: 0 }}>📱 QR Code</h3>
+            <button onClick={() => setShowQrModal(null)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}><X size={20} /></button>
+          </div>
+          <img src={qrUrl} alt="QR Code" style={{ width: '200px', height: '200px', borderRadius: '12px', marginBottom: '1rem', border: '4px solid white' }} />
+          <p style={{ color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem' }}>{showQrModal}</p>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>สแกน QR เพื่อดูประวัติการซ่อมของลูกค้ารายนี้</p>
+          <a href={qrUrl} download={`QR-${showQrModal}.png`}
+            style={{ display: 'inline-block', background: 'var(--accent-primary)', color: 'white', textDecoration: 'none', padding: '0.75rem 1.5rem', borderRadius: '10px', fontWeight: 'bold', fontSize: '0.95rem' }}>
+            ⬇️ ดาวน์โหลด QR
+          </a>
+        </div>
+      </div>
+    );
+  };
   const renderCustomerDetail = () => {
     if (!selectedCustomer) return null;
+
+    const handlePrint = () => window.print();
     
     // Combine both arrays into a single timeline sorted by date
     const timelineEvents = [
@@ -141,6 +174,10 @@ const CustomerHistory = () => {
         title: s.equipmentType,
         status: s.status,
         details: s.notes,
+        location: s.location,
+        beforeImg: s.beforeImg,
+        afterImg: s.afterImg,
+        cost: s.cost,
         time: s.timeStart ? `${s.timeStart}${s.timeEnd ? ' - ' + s.timeEnd : ''}` : null
       })),
       ...selectedCustomer.workLogs.map(w => ({
@@ -157,12 +194,21 @@ const CustomerHistory = () => {
 
     return (
       <div className="animate-fade-in">
-        <button 
-          onClick={() => setSelectedCustomer(null)}
-          style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1.5rem', padding: 0 }}
-        >
-          <ArrowLeft size={20} /> กลับไปหน้ารายชื่อ
-        </button>
+        <style>{`@media print { .no-print { display: none !important; } body { background: white !important; } .nav-bar, .chatbot-btn { display: none !important; } }`}</style>
+        <div className="no-print" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+          <button 
+            onClick={() => setSelectedCustomer(null)}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: 0 }}
+          >
+            <ArrowLeft size={20} /> กลับไปหน้ารายชื่อ
+          </button>
+          <button
+            onClick={handlePrint}
+            style={{ marginLeft: 'auto', background: 'var(--accent-primary)', color: 'white', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', fontSize: '0.9rem' }}
+          >
+            <Printer size={16} /> พิมพ์ PDF
+          </button>
+        </div>
 
         <div className="equipment-card" style={{ padding: '2rem', marginBottom: '2rem', borderTop: '4px solid var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
           <div>
@@ -235,6 +281,18 @@ const CustomerHistory = () => {
 
                 {event.details && <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: '0 0 1rem', background: 'var(--bg-tertiary)', padding: '0.75rem', borderRadius: '8px' }}>{event.details}</p>}
                 
+                {/* GPS Link for schedule events */}
+                {event.location && (
+                  <a
+                    href={event.location.startsWith('http') ? event.location : `https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="no-print"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1rem', padding: '0.4rem 0.85rem', borderRadius: '8px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', color: '#10b981', fontSize: '0.82rem', textDecoration: 'none', fontWeight: '500' }}
+                  >
+                    <MapPin size={13} /> เปิดแผนที่
+                  </a>
+                )}
+                
                 {event.type === 'worklog' && (event.parts || event.cost) && (
                   <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                     {event.parts && (
@@ -252,7 +310,16 @@ const CustomerHistory = () => {
                   </div>
                 )}
 
-                {event.type === 'worklog' && (event.beforeImg || event.afterImg) && (
+                {/* Schedule cost */}
+                {event.type === 'schedule' && event.cost && (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <span style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '0.8rem' }}>ประเมินราคา</span>
+                    <span style={{ color: 'var(--accent-solar)', fontWeight: 'bold' }}>฿{Number(event.cost).toLocaleString()}</span>
+                  </div>
+                )}
+
+                {/* Photos for both worklog and schedule */}
+                {(event.beforeImg || event.afterImg) && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
                     {event.beforeImg && (
                       <div>
@@ -278,6 +345,7 @@ const CustomerHistory = () => {
 
   return (
     <div style={{ paddingBottom: '3rem' }}>
+      {renderQrModal()}
       {!selectedCustomer ? renderCustomerList() : renderCustomerDetail()}
     </div>
   );

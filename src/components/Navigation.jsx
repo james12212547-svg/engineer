@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, List, BookOpen, Settings as SettingsIcon, ClipboardList, Heart, Calculator, Calendar, Users } from 'lucide-react';
+import { Home, List, BookOpen, Settings as SettingsIcon, ClipboardList, Heart, Calculator, Calendar, Users, FileText, Package, BarChart2, MessageCircle, Bell } from 'lucide-react';
 import useStore from '../store/useStore';
 
 const Navigation = () => {
@@ -42,6 +42,31 @@ const Navigation = () => {
       <NavLink to="/customer-history" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
         <Users size={24} />
         <span>ประวัติลูกค้า</span>
+      </NavLink>
+
+      <NavLink to="/quotation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <FileText size={24} />
+        <span>ใบเสนอราคา</span>
+      </NavLink>
+
+      <NavLink to="/inventory" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <Package size={24} />
+        <span>คลังอะไหล่</span>
+      </NavLink>
+
+      <NavLink to="/revenue" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <BarChart2 size={24} />
+        <span>รายได้</span>
+      </NavLink>
+
+      <NavLink to="/team-chat" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <MessageCircle size={24} />
+        <span>แชททีม</span>
+      </NavLink>
+
+      <NavLink to="/reminders" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <Bell size={24} />
+        <span>แจ้งเตือน</span>
       </NavLink>
 
       <NavLink to="/favorites" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ position: 'relative' }}>

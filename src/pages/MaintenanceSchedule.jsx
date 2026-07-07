@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Calendar, Plus, CheckCircle, Clock, Trash2, Edit3, Settings } from 'lucide-react';
+import { useState, useMemo, useRef } from 'react';
+import { Calendar, Plus, CheckCircle, Clock, Trash2, Edit3, Settings, MapPin, Camera, Image } from 'lucide-react';
 import useStore from '../store/useStore';
 import toast from 'react-hot-toast';
 
@@ -12,11 +12,14 @@ const MaintenanceSchedule = () => {
   const [formData, setFormData] = useState({
     customerName: '',
     equipmentType: 'Air Conditioner',
+    location: '',
     date: '',
     timeStart: '',
     timeEnd: '',
     cost: '',
     notes: '',
+    beforeImg: '',
+    afterImg: '',
     status: 'pending'
   });
 
@@ -47,11 +50,14 @@ const MaintenanceSchedule = () => {
     setFormData({
       customerName: '',
       equipmentType: 'Air Conditioner',
+      location: '',
       date: '',
       timeStart: '',
       timeEnd: '',
       cost: '',
       notes: '',
+      beforeImg: '',
+      afterImg: '',
       status: 'pending'
     });
     setEditingId(null);
@@ -62,11 +68,14 @@ const MaintenanceSchedule = () => {
     setFormData({
       customerName: schedule.customerName,
       equipmentType: schedule.equipmentType,
+      location: schedule.location || '',
       date: schedule.date || '',
       timeStart: schedule.timeStart || schedule.time || '',
       timeEnd: schedule.timeEnd || '',
       cost: schedule.cost || '',
       notes: schedule.notes || '',
+      beforeImg: schedule.beforeImg || '',
+      afterImg: schedule.afterImg || '',
       status: schedule.status
     });
     setEditingId(schedule.id);
@@ -234,6 +243,52 @@ const MaintenanceSchedule = () => {
               </div>
             </div>
 
+            {/* Location */}
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <MapPin size={16} /> ที่อยู่ / พิกัด (Optional — ใส่ชื่อสถานที่หรือลิงก์ Google Maps)
+              </label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                placeholder="เช่น บ้านเลขที่ 123 ถนนสุขุมวิท กรุงเทพ หรือวาง Link Google Maps"
+                style={{ width: '100%', padding: '1rem', borderRadius: '8px', fontSize: '1rem' }}
+              />
+            </div>
+
+            {/* Before/After Photos */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              {[['beforeImg', 'รูปก่อนซ่อม 📸'], ['afterImg', 'รูปหลังซ่อม ✅']].map(([field, label]) => (
+                <div key={field}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>{label}</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={e => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = ev => setFormData(f => ({ ...f, [field]: ev.target.result }));
+                      reader.readAsDataURL(file);
+                    }}
+                    style={{ display: 'none' }}
+                    id={`img-${field}`}
+                  />
+                  <label htmlFor={`img-${field}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px dashed var(--border-color)', cursor: 'pointer', color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', transition: 'border-color 0.2s' }}>
+                    <Camera size={18} /> เลือกรูป
+                  </label>
+                  {formData[field] && (
+                    <div style={{ position: 'relative', marginTop: '0.5rem' }}>
+                      <img src={formData[field]} alt={label} style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }} />
+                      <button type="button" onClick={() => setFormData(f => ({ ...f, [field]: '' }))} style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', borderRadius: '50%', width: '22px', height: '22px', cursor: 'pointer', fontSize: '14px', lineHeight: 1 }}>×</button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
               <button 
                 type="button" 
@@ -366,6 +421,34 @@ const ScheduleCard = ({ schedule, onToggleStatus, onEdit, onDelete }) => {
           <div style={{ background: 'var(--bg-primary)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.9rem', marginTop: '0.25rem', fontWeight: 'bold', borderLeft: `2px solid var(--accent-solar)`, display: 'flex', justifyContent: 'space-between' }}>
             <span>ประเมินราคา / ค่าใช้จ่าย:</span>
             <span style={{ color: 'var(--accent-solar)' }}>฿{Number(schedule.cost).toLocaleString()}</span>
+          </div>
+        )}
+        {/* GPS Map Link */}
+        {schedule.location && (
+          <a
+            href={schedule.location.startsWith('http') ? schedule.location : `https://maps.google.com/?q=${encodeURIComponent(schedule.location)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', padding: '0.6rem 0.75rem', borderRadius: '8px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', color: '#10b981', fontSize: '0.85rem', textDecoration: 'none', fontWeight: '500' }}
+          >
+            <MapPin size={14} /> เปิดแผนที่ Google Maps
+          </a>
+        )}
+        {/* Before/After images */}
+        {(schedule.beforeImg || schedule.afterImg) && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.75rem' }}>
+            {schedule.beforeImg && (
+              <div>
+                <span style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>ก่อนซ่อม</span>
+                <img src={schedule.beforeImg} alt="Before" style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
+              </div>
+            )}
+            {schedule.afterImg && (
+              <div>
+                <span style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>หลังซ่อม</span>
+                <img src={schedule.afterImg} alt="After" style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
+              </div>
+            )}
           </div>
         )}
       </div>

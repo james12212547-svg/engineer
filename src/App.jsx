@@ -28,7 +28,13 @@ import Favorites from './pages/Favorites';
 import Settings from './pages/Settings';
 import MaintenanceSchedule from './pages/MaintenanceSchedule';
 import CustomerHistory from './pages/CustomerHistory';
+import Quotation from './pages/Quotation';
+import Inventory from './pages/Inventory';
+import RevenueDashboard from './pages/RevenueDashboard';
+import TeamChat from './pages/TeamChat';
+import MaintenanceReminders from './pages/MaintenanceReminders';
 import ReloadPrompt from './components/ReloadPrompt';
+import { requestNotificationPermission, scheduleAppointmentReminders } from './utils/notifications';
 
 function App() {
   const isAuthenticated = useStore(state => state.isAuthenticated);
@@ -43,8 +49,17 @@ function App() {
   useEffect(() => {
     if (isAuthenticated) {
       loadCustomEquipment();
+      requestNotificationPermission();
     }
   }, [isAuthenticated, loadCustomEquipment]);
+
+  // Schedule reminders whenever schedules change
+  const schedules = useStore(state => state.schedules);
+  useEffect(() => {
+    if (isAuthenticated && schedules) {
+      scheduleAppointmentReminders(schedules);
+    }
+  }, [schedules, isAuthenticated]);
 
   if (!isAuthenticated) {
     return <Login onLogin={login} />;
@@ -79,6 +94,11 @@ function App() {
             <Route path="/work-log" element={<WorkLog />} />
             <Route path="/schedule" element={<MaintenanceSchedule />} />
             <Route path="/customer-history" element={<CustomerHistory />} />
+            <Route path="/quotation" element={<Quotation />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/revenue" element={<RevenueDashboard />} />
+            <Route path="/team-chat" element={<TeamChat />} />
+            <Route path="/reminders" element={<MaintenanceReminders />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
